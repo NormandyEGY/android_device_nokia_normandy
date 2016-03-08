@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, The Android Open Source Project
+ * Copyright 2008, The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ static const char EXT_MODULE_PATH[] = WIFI_EXT_MODULE_PATH;
 #define WIFI_DRIVER_FW_PATH_PARAM	"/sys/module/wlan/parameters/fwpath"
 #endif
 
-static const char IFACE_DIR[]           = "/data/system/wpa_supplicant";
+static const char IFACE_DIR[]           = "";
 #ifdef WIFI_DRIVER_MODULE_PATH
 static const char DRIVER_MODULE_NAME[]  = WIFI_DRIVER_MODULE_NAME;
 static const char DRIVER_MODULE_TAG[]   = WIFI_DRIVER_MODULE_NAME " ";
@@ -847,14 +847,51 @@ int wifi_start_supplicant(int p2p_supported)
     }
 #endif
 
-#ifdef WIFI_DRIVER_MODULE_PATH
-    /* The ar6k driver needs the interface up in order to scan! */
-    if (!strncmp(DRIVER_MODULE_NAME, "ar6000", 6)) {
-        ifc_init();
-        ifc_up("eth0");
-        sleep(2);
-    }
+#ifndef WIFI_DRIVER_MODULE_PATH
+#ifdef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_DRIVER_MODULE_PATH         "/system/wifi/ar6000.ko"
+#else
+#define WIFI_DRIVER_MODULE_PATH         "/system/lib/modules/wlan.ko"
 #endif
+#endif
+#ifndef WIFI_DRIVER_MODULE_NAME
+#ifdef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_DRIVER_MODULE_NAME         "ar6000"
+#else
+#define WIFI_DRIVER_MODULE_NAME         "wlan"
+#endif
+#endif
+#ifndef WIFI_SDIO_IF_DRIVER_MODULE_PATH
+#ifndef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_SDIO_IF_DRIVER_MODULE_PATH         "/system/lib/modules/librasdioif.ko"
+#endif
+#endif
+#ifndef WIFI_SDIO_IF_DRIVER_MODULE_NAME
+#ifndef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_SDIO_IF_DRIVER_MODULE_NAME "librasdioif"
+#endif
+#endif
+#ifndef WIFI_DRIVER_MODULE_ARG
+#ifndef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_SDIO_IF_DRIVER_MODULE_ARG  ""
+#endif
+#define WIFI_DRIVER_MODULE_ARG          ""
+#endif
+#ifndef WIFI_FIRMWARE_LOADER
+#ifdef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_FIRMWARE_LOADER		"wlan_tool"
+#else
+#define WIFI_FIRMWARE_LOADER		""
+#endif
+#endif
+#ifdef  CONFIG_WLAN_ATH_AR6K
+#define WIFI_TEST_INTERFACE		"wlan0"
+#define WIFI_DRIVER_LOADER_DELAY	2000000
+#else
+#define WIFI_TEST_INTERFACE		"sta"
+#define WIFI_DRIVER_LOADER_DELAY	1000000
+#endif
+
 
     property_get("wifi.interface", primary_iface, WIFI_TEST_INTERFACE);
 
