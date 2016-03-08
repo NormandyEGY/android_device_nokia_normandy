@@ -1,0 +1,11 @@
+/dev/block/mtdblock5		u:object_r:radio_device:s0
+/dev/nvmap			u:object_r:nv_device:s0
+/dev/nvhost-.*			u:object_r:nv_device:s0
+/system/bin/dbus-daemon		u:object_r:dbusd_exec:s0
+/system/etc/ppp(/.*)?		u:object_r:ppp_system_file:s0
+/system/etc/dhcpcd(/.*)? 	u:object_r:dhcp_system_file:s0
+/system/bin/ping    		u:object_r:ping_exec:s0
+
+#line 1 "device/huawei/c8813q/sepolicy/file_contexts"
+# cust filesystem
+/cust(/.*)?                     u:object_r:cust_file:s0

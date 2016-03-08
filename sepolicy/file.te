@@ -1,0 +1,7 @@
+# Carrier cust type
+type cust_file, file_type;
+type nv_device, file_type;
+type dbusd_exec, file_type;
+type ppp_system_file, file_type;
+type ping_exec, file_type;
+type dhcp_system_file, file_type;
