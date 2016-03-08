@@ -43,18 +43,18 @@ import com.android.internal.telephony.cdma.SignalToneUtil;
 import java.util.ArrayList;
 
 /**
- * Custom Qualcomm SimReady RIL for Huawei using the latest Uicc stack
+ * Custom Qualcomm SimReady RIL for JSR using the latest Uicc stack
  *
  * {@hide}
  */
-public class HuaweiCdmaQcomRIL extends HuaweiQualcommRIL implements CommandsInterface {
+public class JSRCdmaQcomRIL extends JSRQualcommRIL implements CommandsInterface {
     boolean RILJ_LOGV = true;
     boolean RILJ_LOGD = true;
 
     private Object mSMSLock = new Object();
     private boolean mIsSendingSMS = false;
     public static final long SEND_SMS_TIMEOUT_IN_MS = 30000;
-    public HuaweiCdmaQcomRIL(Context context, int networkMode, int cdmaSubscription) {
+    public JSRCdmaQcomRIL(Context context, int networkMode, int cdmaSubscription) {
         super(context, networkMode, cdmaSubscription);
         mQANElements = 4;
     }

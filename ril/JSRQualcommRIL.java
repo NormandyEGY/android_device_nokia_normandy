@@ -47,19 +47,19 @@ import java.util.ArrayList;
  * piggybacked in RIL_UNSOL_RESPONSE_RADIO_STATE_CHANGED. Instead,
  * these radios will send radio state and we have to query for SIM
  * status separately.
- * Custom Qualcomm No SimReady RIL for Huawei
+ * Custom Qualcomm No SimReady RIL for JSR
  *
  * {@hide}
  */
 
-public class HuaweiQualcommRIL extends QualcommSharedRIL implements CommandsInterface {
+public class JSRQualcommRIL extends QualcommSharedRIL implements CommandsInterface {
     private final int RIL_INT_RADIO_OFF = 0;
     private final int RIL_INT_RADIO_UNAVAILABLE = 1;
     private final int RIL_INT_RADIO_ON = 2;
     private final int RIL_INT_RADIO_ON_NG = 10;
     private final int RIL_INT_RADIO_ON_HTC = 13;
 
-    public HuaweiQualcommRIL(Context context, int networkMode, int cdmaSubscription) {
+    public JSRQualcommRIL(Context context, int networkMode, int cdmaSubscription) {
         super(context, networkMode, cdmaSubscription);
         mQANElements = 4;
     }
