@@ -1,0 +1,9 @@
+[
+    {
+        "remote":       "github",
+        "repository":   "CyanogenMod/android_frameworks_opt_telephony",
+        "target_path":  "frameworks/opt/telephony",
+        "revision":     "refs/heads/caf/cm-12.1"
+    }
+]
+

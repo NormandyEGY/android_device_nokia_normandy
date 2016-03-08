@@ -1,8 +1,22 @@
-com.qc.hardware=true \
-dev.pm.dyn_sample_period=700000 \
-dev.pm.dyn_samplingrate=1 \
-ro.vendor.extension_library=/system/lib/libqc-opt.so \
+# Qualcomm
+com.qc.hardware=true
+dev.pm.dyn_sample_period=700000
+dev.pm.dyn_samplingrate=1
+ro.vendor.extension_library=/system/lib/libqc-opt.so
+
+#
+#for using emmc partition instead sdcard
+#
+persist.sys.emmcsdcard.enabled=1
+
+#
+# system props for SD card emulation of emmc partition
+#
+ro.emmc.sdcard.partition=21
+
+# Telephony
 rild.libargs=-d /dev/smd0
+rild.libpath=/system/lib/libril-qc-qmi-1.so
 persist.rild.nitz_plmn=
 persist.rild.nitz_long_ons_0=
 persist.rild.nitz_long_ons_1=
@@ -12,3 +26,93 @@ persist.rild.nitz_short_ons_0=
 persist.rild.nitz_short_ons_1=
 persist.rild.nitz_short_ons_2=
 persist.rild.nitz_short_ons_3=
+ril.subscription.types=NV,RUIM
+ro.telephony.call_ring.delay=3000
+ro.telephony.ril.v3=skippinpukcount,qcomdsds
+persist.multisim.config=dsds
+persist.radio.multisim.config=dsds
+ro.multi.rild=true
+
+ro.telephony.default_network=3
+ro.telephony.default_cdma_sub=0
+ro.cdma.factory=china
+ro.cdma.subscribe_on_ruim_ready=true
+telephony.lteOnCdmaDevice=0
+ro.telephony.call_ring.multiple=false
+ro.telephony.ril.config=fakeiccid
+
+ro.use_data_netmgrd=true
+persist.data_netmgrd_nint=16
+persist.radio.apm_sim_not_pwdn=1
+media.stagefright.enable-player=true
+media.stagefright.enable-meta=false
+media.stagefright.enable-scan=true
+media.stagefright.enable-http=true
+media.stagefright.enable-fma2dp=true
+media.stagefright.enable-aac=true
+media.stagefright.enable-qcp=true
+
+#7x27a configs
+audio.gapless.playback.disable=true
+audio.offload.disable=1
+dalvik.vm.jit.codecachesize=0
+persist.sys.force_highendgfx=true
+ro.sys.fw.bg_apps_limit=16
+ro.fm.analogpath.supported=false
+ro.fm.mulinst.recording.support=false
+ro.sf.lcd_density=220
+
+#Low-Ram
+ro.config.low_ram=true
+config.disable_atlas=true
+ro.config.max_starting_bg=8
+
+# Use ART small mode
+dalvik.vm.dex2oat-filter=interpret-only
+dalvik.vm.dex2oat-flags=--no-watch-dog
+dalvik.vm.image-dex2oat-filter=speed
+
+ro.fm.transmitter=false
+headset.hook.delay=500
+ro.bluetooth.remote.autoconnect=true
+ro.bluetooth.request.master=true
+ro.bt.bdaddr_path=/data/misc/bluedroid/bdaddr
+ro.qualcomm.bluetooth.dun=true
+ro.qualcomm.bluetooth.ftp=true
+ro.cwm.enable_key_repeat=true
+debug.composition.type=dyn
+debug.sf.hw=1
+debug.composition.7x27A.type=dyn
+debug.composition.7x25A.type=dyn
+debug.composition.8x25.type=gpu
+debug.composition.n_plus.type=dyn
+debug.hwc.dynThreshold=1.9
+ro.bq.gpu_to_cpu_unsupported=1
+ro.max.fling_velocity=4000
+ro.opengles.version=131072
+ro.sf.lcd_density=240
+dalvik.vm.heapgrowthlimit=32m
+dalvik.vm.heapsize=64m
+com.qc.hardware=true
+dev.pm.dyn_sample_period=700000
+dev.pm.dyn_samplingrate=1
+ro.vendor.extension_library=/system/lib/libqc-opt.so
+persist.sys.usb.config=mass_storage,adb
+ro.vold.umsdirtyratio=50
+persist.webview.provider=classic
+wifi.interface=wlan0
+wifi.supplicant_scan_interval=60
+persist.sys.thermal.monitor=1
+ro.carrier=unknown
+ro.ril.hsxpa=1
+ro.ril.gprsclass=10
+ro.adb.qemud=1
+dalvik.vm.heapstartsize=8m
+dalvik.vm.heaptargetutilization=0.75
+dalvik.vm.heapminfree=2m
+dalvik.vm.heapmaxfree=8m
+persist.sys.dalvik.vm.lib=libdvm.so
+dalvik.vm.lockprof.threshold=500
+dalvik.vm.dexopt-flags=m=y
+net.bt.name=Android
+dalvik.vm.stack-trace-file=/data/anr/traces.txt

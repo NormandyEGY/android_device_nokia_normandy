@@ -18,8 +18,6 @@ LOCAL_PATH := $(call my-dir)
 
 ifeq ($(TARGET_DEVICE),normandy)
 
-#ALL_PREBUILT += $(INSTALLED_KERNEL_TARGET)
-
 include $(CLEAR_VARS)
 LOCAL_MODULE := p2p_supplicant_overlay.conf
 LOCAL_MODULE_TAGS := optional
@@ -112,5 +110,6 @@ LOCAL_MODULE_PATH  := $(TARGET_OUT_KEYLAYOUT)
 include $(BUILD_PREBUILT)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
+#include vendor/extra/Android.mk
 
 endif
