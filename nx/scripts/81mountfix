@@ -1,5 +1,0 @@
-#!/system/bin/sh
-mount -o rw,remount /
-fsck_msdos -y /dev/block/mmcblk0p21
-busybox mount -o rw,dirsync,noatime,errors=continue -t vfat /dev/block/vold/179:21 /mnt/media_rw/sdcard1
-busybox mount -o rw,dirsync,noatime,errors=continue,bind -t auto /mnt/media_rw/sdcard1 /storage/sdcard1
