@@ -1,0 +1,94 @@
+From 3989d34a6e11a3ca5fb0d2a33b7fa660850106f6 Mon Sep 17 00:00:00 2001
+From: Ahmed Hady <ahmedhady6@gmail.com>
+Date: Wed, 30 Sep 2015 04:57:16 +0200
+Subject: [PATCH] Fixing Sensors for Nokia X
+
+Change-Id: I2ecada83e48d47215a48524164a5e7094ab95abd
+---
+ rootdir/init.rc | 43 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
+
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index 3fa9dc7..0628231 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -253,7 +253,7 @@ on post-fs-data
+     # create basic filesystem structure
+     mkdir /data/misc 01771 system misc
+     mkdir /data/misc/adb 02750 system shell
+-    mkdir /data/misc/audit 02750 audit system
++    mkdir /data/misc/audit 0777 audit system
+     mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
+     mkdir /data/misc/bluetooth 0770 system system
+     mkdir /data/misc/keystore 0700 keystore keystore
+@@ -396,17 +396,16 @@ on boot
+     chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+ 
+     chown system system /sys/class/timed_output/vibrator/enable
+-    chown system system /sys/class/leds/keyboard-backlight/brightness
+     chown system system /sys/class/leds/lcd-backlight/brightness
+     chown system system /sys/class/leds/torch-light/brightness
+     chown system system /sys/class/leds/button-backlight/brightness
+-    chown system system /sys/class/leds/jogball-backlight/brightness
++    chown system system /sys/class/leds/red/blink
+     chown system system /sys/class/leds/red/brightness
++    chown system system /sys/class/leds/green/blink
+     chown system system /sys/class/leds/green/brightness
++    chown system system /sys/class/leds/blue/blink
+     chown system system /sys/class/leds/blue/brightness
+-    chown system system /sys/class/leds/red/device/grpfreq
+-    chown system system /sys/class/leds/red/device/grppwm
+-    chown system system /sys/class/leds/red/device/blink
++    chown system system /sys/class/leds/flashlight/brightness
+     chown system system /sys/class/timed_output/vibrator/enable
+     chown system system /sys/module/sco/parameters/disable_esco
+     chown system system /sys/kernel/ipv4/tcp_wmem_min
+@@ -416,6 +415,34 @@ on boot
+     chown system system /sys/kernel/ipv4/tcp_rmem_def
+     chown system system /sys/kernel/ipv4/tcp_rmem_max
+     chown root radio /proc/cmdline
++    chown system system /sys/bus/platform/devices/fastboot/fastboot
++    chown system system /sys/bus/platform/devices/fastboot/resume
++    chown system system /sys/class/compass/akm8975/delay_acc
++    chown system system /sys/class/compass/akm8975/delay_mag
++    chown system system /sys/class/compass/akm8975/delay_ori
++    chown system system /sys/class/compass/akm8975/enable_acc
++    chown system system /sys/class/compass/akm8975/enable_mag
++    chown system system /sys/class/compass/akm8975/enable_ori
++    chown system system /sys/class/compass/akm8975/accel
++    chown input system /sys/bus/i2c/devices/1-0039/enable_als_sensor
++    chown input system /sys/bus/i2c/devices/1-0039/enable_ps_sensor
++    chown input system /sys/bus/i2c/devices/1-0039/ps_sensor_thld
++    chown input system /sys/bus/i2c/devices/1-0039/als_poll_delay
++    chmod 0664 /sys/bus/i2c/devices/1-0039/enable_als_sensor
++    chmod 0664 /sys/bus/i2c/devices/1-0039/enable_ps_sensor
++    chmod 0664 /sys/bus/i2c/devices/1-0039/ps_sensor_thld
++    chmod 0664 /sys/bus/i2c/devices/1-0039/als_poll_delay
++    chown input  system /sys/devices/i2c-1/1-000f/enable
++    chmod 0664 /sys/devices/i2c-1/1-000f/enable
++	
++# Permissions for Sensors
++    chmod 0666  /dev/ltr559_ls
++    chmod 0666  /dev/ltr559_ps
++#modify gsensor file node mode
++    chown root system /sys/class/input/input2/delay
++
++    chmod 0666 /dev/glanceview 
++    chmod 0666 /dev/gv_oneled
+ 
+     # Define default initial receive window size in segments.
+     setprop net.tcp.default_init_rwnd 60
+@@ -500,10 +527,6 @@ service console /system/bin/sh
+     group shell log
+     seclabel u:r:shell:s0
+ 
+-service auditd /system/bin/auditd -k
+-    seclabel u:r:logd:s0
+-    class main
+-
+ on property:ro.debuggable=1
+     start console
+ 
+-- 
+2.1.4
+

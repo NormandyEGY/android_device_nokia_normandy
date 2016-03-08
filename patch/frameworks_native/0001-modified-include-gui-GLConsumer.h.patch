@@ -1,11 +1,11 @@
-From 384f1850e9ce7a899072278cbdc3206dc96193fa Mon Sep 17 00:00:00 2001
+From 58ec65b44639e1941cddbfd191d0484e5f1c738d Mon Sep 17 00:00:00 2001
 From: Ahmed Hady <ahmedhady6@gmail.com>
 Date: Tue, 14 Jul 2015 00:17:10 +0200
-Subject: [PATCH] 	modified:   include/gui/GLConsumer.h 	modified:  
- libs/gui/Android.mk 	modified:   services/surfaceflinger/Android.mk 
- modified:   services/surfaceflinger/Layer.cpp 	modified:  
- services/surfaceflinger/RenderEngine/GLES11RenderEngine.cpp 	modified:  
- services/surfaceflinger/SurfaceFlingerConsumer.cpp 	modified:  
+Subject: [PATCH] modified: include/gui/GLConsumer.h modified:
+ libs/gui/Android.mk modified: services/surfaceflinger/Android.mk modified:
+ services/surfaceflinger/Layer.cpp modified:
+ services/surfaceflinger/RenderEngine/GLES11RenderEngine.cpp modified:
+ services/surfaceflinger/SurfaceFlingerConsumer.cpp modified:
  services/surfaceflinger/SurfaceFlingerConsumer.h
 
 Change-Id: I01cb51d1dfe5ad8b05d439d4841924fe6e39cca7
@@ -56,7 +56,7 @@ index 9770da2..f810f0c 100644
  	LOCAL_CFLAGS += -DSAMSUNG_GRALLOC_EXTERNAL_USECASES
  endif
 diff --git a/services/surfaceflinger/Android.mk b/services/surfaceflinger/Android.mk
-index e8b0ad1..57ce60a 100644
+index f9a6852..69a6cd3 100644
 --- a/services/surfaceflinger/Android.mk
 +++ b/services/surfaceflinger/Android.mk
 @@ -87,6 +87,10 @@ else
@@ -202,5 +202,5 @@ index 28f2f6a..632ff82 100644
      // See GLConsumer::bindTextureImageLocked().
      status_t bindTextureImage();
 -- 
-1.9.1
+2.1.4
 

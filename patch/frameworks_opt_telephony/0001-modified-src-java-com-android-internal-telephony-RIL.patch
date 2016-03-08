@@ -1,0 +1,78 @@
+From c0caa8a440dac2b4c998c10149a275380712c97a Mon Sep 17 00:00:00 2001
+From: Ahmed Hady <ahmedhady6@gmail.com>
+Date: Mon, 21 Sep 2015 05:19:46 +0200
+Subject: [PATCH] 	modified:  
+ src/java/com/android/internal/telephony/RIL.java
+
+Change-Id: I5c114195a2e6960a3d8744e56b00c3e6fb25dcd8
+---
+ src/java/com/android/internal/telephony/RIL.java | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/src/java/com/android/internal/telephony/RIL.java b/src/java/com/android/internal/telephony/RIL.java
+index a012244..53bac74 100644
+--- a/src/java/com/android/internal/telephony/RIL.java
++++ b/src/java/com/android/internal/telephony/RIL.java
+@@ -232,8 +232,10 @@ class RILRequest {
+  */
+ public class RIL extends BaseCommands implements CommandsInterface {
+     static final String RILJ_LOG_TAG = "RILJ";
++    static final String LOG_TAG = RILJ_LOG_TAG;
+     static final boolean RILJ_LOGD = true;
+     static final boolean RILJ_LOGV = false; // STOPSHIP if true
++    protected boolean samsungDriverCall = false;
+ 
+     /**
+      * Wake lock timeout should be longer than the longest timeout in
+@@ -565,8 +567,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
+                 retryCount = 0;
+ 
+                 mSocket = s;
+-                Rlog.i(RILJ_LOG_TAG, "(" + mInstanceId + ") Connected to '"
+-                        + rilSocket + "' socket");
++                Rlog.i(RILJ_LOG_TAG, "Connected to '" + SOCKET_NAME_RIL + "' socket");
+ 
+                 /* Compatibility with qcom's DSDS (Dual SIM) stack */
+                 if (needsOldRilFeature("qcomdsds")) {
+@@ -2512,7 +2513,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
+             case 7:
+             case 8:
+             case 9:
+-            case 10: state = RadioState.RADIO_ON; break;
++            case 10:
++            case 13: state = RadioState.RADIO_ON; break;
+ 
+             default:
+                 throw new RuntimeException(
+@@ -3737,7 +3739,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
+ 
+     @Override
+     public boolean needsOldRilFeature(String feature) {
+-        String[] features = SystemProperties.get("ro.telephony.ril.config", "").split(",");
++        String[] features = SystemProperties.get("ro.telephony.ril.v3", "").split(",");
+         for (String found: features) {
+             if (found.equals(feature))
+                 return true;
+@@ -3929,7 +3931,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
+     responseDataCallList(Parcel p) {
+         ArrayList<DataCallResponse> response;
+         boolean oldRil = needsOldRilFeature("datacall");
+-        int ver = (oldRil ? 3 : p.readInt());
++//        int ver = (oldRil ? 3 : p.readInt());
++        int ver = p.readInt();
+         int num = p.readInt();
+         riljLog("responseDataCallList ver=" + ver + " num=" + num);
+ 
+@@ -3944,7 +3947,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
+     protected Object
+     responseSetupDataCall(Parcel p) {
+         boolean oldRil = needsOldRilFeature("datacall");
+-        int ver = (oldRil ? 3 : p.readInt());
++//        int ver = (oldRil ? 3 : p.readInt());
++        int ver = p.readInt();
+         int num = p.readInt();
+         if (RILJ_LOGV) riljLog("responseSetupDataCall ver=" + ver + " num=" + num);
+ 
+-- 
+1.9.1
+

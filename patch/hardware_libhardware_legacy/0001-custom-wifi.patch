@@ -1,0 +1,32 @@
+From ee1add6e15b976cb64f90707a5a5bf2b66945a23 Mon Sep 17 00:00:00 2001
+From: Daz Jones <yuki@thebronasium.com>
+Date: Sat, 27 Jul 2013 02:40:36 +0100
+Subject: [PATCH] wifi: add support for custom Wi-Fi implementations
+
+Change-Id: Id464138cdb679fc4550914a32d9c71131bdfffb3
+---
+ wifi/Android.mk | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/wifi/Android.mk b/wifi/Android.mk
+index ad9f2c9..859b9bd 100644
+--- a/wifi/Android.mk
++++ b/wifi/Android.mk
+@@ -37,7 +37,13 @@ ifdef WIFI_EXT_MODULE_NAME
+ LOCAL_CFLAGS += -DWIFI_EXT_MODULE_NAME=\"$(WIFI_EXT_MODULE_NAME)\"
+ endif
+ 
+-LOCAL_SRC_FILES += wifi/wifi.c
++ifeq ($(TARGET_CUSTOM_WIFI),)
++       LOCAL_SRC_FILES += \
++               wifi/wifi.c
++else
++       LOCAL_SRC_FILES += \
++               $(TARGET_CUSTOM_WIFI)
++endif
+ 
+ ifdef WPA_SUPPLICANT_VERSION
+ LOCAL_CFLAGS += -DLIBWPA_CLIENT_EXISTS
+-- 
+2.3.1
+
