@@ -1,4 +1,4 @@
-# Copyright (c) 2011-2012, The Linux Foundation. All rights reserved.
+# Copyright (c) 2014, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,10 +25,9 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#
-on early-boot
-    start comp-set
-    start version-set
+
+#on post-fs
+#	exec /system/bin/sh /system/etc/init.qcom.thermald_conf.sh
 
 on init
     # framebuffer pls... :(
@@ -37,18 +36,42 @@ on init
 service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p17 /dev/block/mmcblk0p18 /dev/block/mmcblk0p15 /dev/block/mmcblk0p21
     class core
 
+service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+    class late_start
+    user root
+    group root
+    oneshot
+    disabled
 
-    mkdir /variant 0555 system system
-    mkdir /preload 0555 system system
+service wpa_supplicant /system/bin/wpa_supplicant -ddd \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -I/system/etc/wifi/wpa_supplicant_overlay.conf \
+    -O/data/misc/wifi/sockets \
+    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
 
-    # Filesystem debugfs
-    mount debugfs debugfs /sys/kernel/debug
-    symlink /sys/kernel/debug /mnt/debugfs
-
-    # framebuffer pls... :(
-    write /sys/module/msm_fb/parameters/align_buffer 1
+service p2p_supplicant /system/bin/wpa_supplicant -ddd \
+    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
+    -I/system/etc/wifi/p2p_supplicant_overlay.conf -N \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -I/system/etc/wifi/wpa_supplicant_overlay.conf \
+    -O/data/misc/wifi/sockets -puse_p2p_group_interface=1 \
+    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
 
 service wlan_detect /system/bin/wlan_detect
+    class main
+    user root
+    group root
+    oneshot
+
+service gps_check /system/bin/gps_check
     class main
     user root
     group root
@@ -59,18 +82,31 @@ service akm8963 /system/bin/akmd8963
     disabled
     oneshot
 
-service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+service compassd /system/bin/compassd
+    class main
+    disabled
+    oneshot
+	
+on boot
+   start qcamerasvr
+   start gpu_dcvsd
+   start psensorCal
+
+#start camera server as daemon
+service qcamerasvr /system/bin/mm-qcamera-daemon
+        class late_start
+        user camera
+        group camera system inet audio
+
+service mpdecision /system/bin/mpdecision --no_sleep --avg_comp
     class late_start
     user root
-    group root
-    oneshot
-    disabled
-
 
 service thermald /system/bin/thermald
-    class late_start
-    user root
-    group root
+   class late_start
+   user root
+   group root
+   disabled
 
 on property:persist.sys.thermal.monitor=1
     start thermald
@@ -83,159 +119,8 @@ service gpu_dcvsd /system/bin/gpu_dcvsd
     user root
     oneshot
 
-service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
-    class late_start
-    user root
-    group system qcom_oncrpc
-    disabled
-    oneshot
-
-on post-fs
-    exec /system/bin/sh /system/etc/init.qcom.thermald_conf.sh
-
-    #Borqs Created tmp directory for CSVT LoopBack Call
-    mkdir /data/tmp 0771 radio radio
-
-    chmod 2770 /data/radio
-
-#service ril-qmi /system/bin/sh /init.qcom.ril.sh
-#    class main
-#    user root
-#    oneshot
-
-service nvbk_storage /system/bin/nvbk_storage
-    class late_start
-    user root
-    disabled
-
-on property:ro.boot.emmc=true
-    start nvbk_storage
-
-on early-init
-#    mkdir /storage/emmc 0000 system system
-
-#service ft_fwupdate /system/bin/sh /system/etc/init.ft.fwupdate.sh
-#    class late_start
-#    user root
-#    oneshot
-
-service comp-set /system/bin/sh /system/etc/init.qcom.composition_type.sh
-    class late_start
-    user root
-    critical
-    disabled
-    oneshot
-
-service version-set /system/bin/sh /system/etc/init.target.8x25.sh
-    class late_start
-    user root
-    critical
-    disabled
-    oneshot
-
-service sd_hot_plug /system/bin/sh /system/etc/init.qcom.sd_hot_plug.sh
-    user root
-    critical
-    disabled
-    oneshot
-
-on boot
-    start qcamerasvr
-    start gpu_dcvsd
-    start psensorCal
-    # zRAM
-    write /proc/sys/vm/page-cluster 0
-
-    ###CSVT #######
-    chmod 0777 /dev/smd11
-
-    chown system system /sys/power/autosleep
-    chown system system /sys/bus/platform/devices/fastboot/fastboot
-    chown system system /sys/bus/platform/devices/fastboot/resume
-    chown system system /sys/class/compass/akm8975/delay_acc
-    chown system system /sys/class/compass/akm8975/delay_mag
-    chown system system /sys/class/compass/akm8975/delay_ori
-    chown system system /sys/class/compass/akm8975/enable_acc
-    chown system system /sys/class/compass/akm8975/enable_mag
-    chown system system /sys/class/compass/akm8975/enable_ori
-    chown system system /sys/class/compass/akm8975/accel
-    chown input system /sys/bus/i2c/devices/1-0039/enable_als_sensor
-    chown input system /sys/bus/i2c/devices/1-0039/enable_ps_sensor
-    chown input system /sys/bus/i2c/devices/1-0039/ps_sensor_thld
-    chown input system /sys/bus/i2c/devices/1-0039/als_poll_delay
-    chmod 0664 /sys/bus/i2c/devices/1-0039/enable_als_sensor
-    chmod 0664 /sys/bus/i2c/devices/1-0039/enable_ps_sensor
-    chmod 0664 /sys/bus/i2c/devices/1-0039/ps_sensor_thld
-    chmod 0664 /sys/bus/i2c/devices/1-0039/als_poll_delay
-    chown input  system /sys/devices/i2c-1/1-000f/enable
-    chmod 0664 /sys/devices/i2c-1/1-000f/enable
-    # Permissions for Sensors
-    chmod 0666  /dev/ltr559_ls
-    chmod 0666  /dev/ltr559_ps
-    #modify gsensor file node mode
-    chown root system /sys/class/input/input2/delay
-
-    chmod 0666 /dev/glanceview
-    chmod 0666 /dev/gv_oneled
-
-    # insert the system monitor modules
-    insmod /system/lib/modules/sm_event_log.ko
-    insmod /system/lib/modules/sm_event_driver.ko
-
-# Set CSVT audio echo Path
-    setprop vt.audio.useecho 0
-    setprop vt.audio.usemvs 1
-
-# set core dump param
-    setrlimit 4 ${persist.sys.coredump} ${persist.sys.coredump}
-    write /proc/sys/kernel/core_pattern |/system/bin/coredump\ core-%e-%p-%t-%s
-
-# Configure and enable KSM
-    write /sys/kernel/mm/ksm/pages_to_scan 100
-    write /sys/kernel/mm/ksm/sleep_millisecs 500
-    write /sys/kernel/mm/ksm/run 1
-
-#AKM8975 sensor daemon
-service akmd /system/bin/akmdfs -m2
-    class main
-    user compass
-    group compass misc input
-    disabled
-
-#start camera server as daemon
-service qcamerasvr /system/bin/mm-qcamera-daemon
-        class late_start
-        user camera
-        group camera system inet audio
-
-service mpdecision /system/bin/mpdecision --no_sleep --avg_comp
-        class late_start
-	user root
-	disabled
-
-#on property:sys.radio.shutdown=true
-#   exec /system/bin/sh /system/etc/init.qcom.efs.sync.sh
-
-
-service qosmgrd /system/bin/qosmgr /system/etc/qosmgr_rules.xml
-    user system
-    group system
-    disabled
-
-#shenzhiyong@byd.com add for psensor calibration
-service psensorCal /system/bin/psensorCal
-    class late_start
-    user root
-    oneshot
-
 on fs
     # Failure to mount any partition in fstab file results in failure to launch late-start class.
     mount_all fstab.qcom
     # zRAM
-    swapon_all /fstab.atlas40
-
-# 2013-09-11  Li Tao  fix Normandy_P003603, touch pannel testAllFilesInSysAreNotWritable
-on property:persist.radio.tp.upgrade=1
-    chmod 766 /sys/bus/i2c/devices/1-0038/fwupdate
-on property:persist.radio.tp.upgrade=0
-    chmod 664 /sys/bus/i2c/devices/1-0038/fwupdate
+    swapon_all /fstab.qcom
